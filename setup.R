@@ -177,6 +177,7 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype, charttype) {
                               showlegend = F)
   
   fig <- fig %>% layout(margin = list(l = 50, r = 50, t = 60, b = 105),
+                        bargap = 0,
                         autosize = T,
                         title = titleSTR,
                         paper_bgcolor='rgb(255,255,255)', plot_bgcolor='rgb(229,229,229)',
