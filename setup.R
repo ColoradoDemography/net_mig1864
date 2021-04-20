@@ -131,7 +131,7 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype) {
     
     if(i == length(ctyname)) {
       chartSQL <- paste0(chartSQL,"'",str_pad(cty,3,pad="0"), "');")
-      titleSTR = paste0(titleSTR," and ",ctyname[i], ": ",seriestype)
+      titleSTR = paste0(titleSTR," and ",ctyname[i], ":<br>",seriestype)
     } else
     {
       chartSQL <- paste0(chartSQL,"'",str_pad(cty,3,pad="0"), "', ")
@@ -158,7 +158,7 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype) {
 
    # Plotting
 
-   fig <- plot_ly(f.chartData, x = ~year, y = ~netmigration, 
+   fig <- plot_ly(width=1500, height=500, f.chartData, x = ~year, y = ~netmigration, 
                   type = 'scatter', mode = 'lines+markers',
                   color = ~county,
                   colors= "Dark2",
@@ -169,7 +169,7 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype) {
   fig <- fig %>% add_segments(x = min(f.chartData$year), xend = max(f.chartData$year), y = 0, yend = 0, color = I("black"),
                               showlegend = F)
   
-  fig <- fig %>% layout( # margin = list(l = 50, r = 50, t = 60, b = 105),
+  fig <- fig %>% layout( margin = list(l = 50, r = 50, t = 60, b = 105),
                         bargap = 0,
                         autosize = T,
                         title = titleSTR,
