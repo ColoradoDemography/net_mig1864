@@ -158,14 +158,14 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype, charttype) {
 
    # Plotting
  if(charttype == "Line Chart") {
-   fig <- plot_ly(width = 1500, height = 500, f.chartData, x = ~year, y = ~netmigration, 
+   fig <- plot_ly(f.chartData, x = ~year, y = ~netmigration, 
                   type = 'scatter', mode = 'lines+markers',
                   color = ~county,
                   colors= "Dark2",
                   name = ~county, text = ~valueText, hoverinfo = 'text') %>% 
      config( toImageButtonOptions = list(format = "png", filename = total_tit))
  } else {
-   fig <- plot_ly(width = 1500, height = 500, f.chartData, x = ~year, y = ~netmigration, 
+   fig <- plot_ly(f.chartData, x = ~year, y = ~netmigration, 
                   type = 'bar',
                   color = ~county,
                   colors= "Dark2",
@@ -177,6 +177,7 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype, charttype) {
                               showlegend = F)
   
   fig <- fig %>% layout(margin = list(l = 50, r = 50, t = 60, b = 105),
+                        autosize = T,
                         title = titleSTR,
                         paper_bgcolor='rgb(255,255,255)', plot_bgcolor='rgb(229,229,229)',
                         hoverlabel = "right",
