@@ -11,7 +11,6 @@ source("setup.R")
   ctylist  <- popPlace(DOLAPool)
   defaultCty <- "Select County From List..."
   seriessel <- c("Total Population", "Working Age Population (ages 18 to 64)")
-  chartsel <- c("Bar Chart", "Line Chart")
   typeList <- typSelect()
 
 
@@ -19,7 +18,6 @@ function(req) {
   htmlTemplate("index.html",
                 county=selectInput("county","Click Box to Select one or more counties:", choices= ctylist[,2],multiple = TRUE),  # Build this from data set
                 series=selectInput("series","Select data series:",choices= seriessel), 
-                chartsel = selectInput("chartsel","Select a chart type:",choices=chartsel),
                 goBtn = actionButton("goButton","Generate Chart"),
                 out_chart = plotlyOutput("CHOutput"),
                 dlBtn = downloadButton("CHDATA","Download Data (CSV)"))

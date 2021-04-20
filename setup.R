@@ -115,7 +115,7 @@ substrRight <- function(x, n){
 
 
 # GenPlot returns the Plots
-GenPlot <- function(DBPool, ctyfips, ctyname, seriestype, charttype) {
+GenPlot <- function(DBPool, ctyfips, ctyname, seriestype) {
 
   if(seriestype == "Total Population") {
     chartSQL <- "SELECT fips, county, year, netMigration_tot FROM estimates.\"netMigration_1864\" WHERE fips IN ("
@@ -157,26 +157,19 @@ GenPlot <- function(DBPool, ctyfips, ctyname, seriestype, charttype) {
   
 
    # Plotting
- if(charttype == "Line Chart") {
+
    fig <- plot_ly(f.chartData, x = ~year, y = ~netmigration, 
                   type = 'scatter', mode = 'lines+markers',
                   color = ~county,
                   colors= "Dark2",
                   name = ~county, text = ~valueText, hoverinfo = 'text') %>% 
      config( toImageButtonOptions = list(format = "png", filename = total_tit))
- } else {
-   fig <- plot_ly(f.chartData, x = ~year, y = ~netmigration, 
-                  type = 'bar',
-                  color = ~county,
-                  colors= "Dark2",
-                  name = ~county, text = ~valueText, hoverinfo = 'text') %>% 
-     config( toImageButtonOptions = list(format = "png", filename = total_tit))
- }
+
   
   fig <- fig %>% add_segments(x = min(f.chartData$year), xend = max(f.chartData$year), y = 0, yend = 0, color = I("black"),
                               showlegend = F)
   
-  fig <- fig %>% layout(margin = list(l = 50, r = 50, t = 60, b = 105),
+  fig <- fig %>% layout( # margin = list(l = 50, r = 50, t = 60, b = 105),
                         bargap = 0,
                         autosize = T,
                         title = titleSTR,

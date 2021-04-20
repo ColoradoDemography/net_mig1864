@@ -6,11 +6,9 @@ observeEvent( input$goButton,{
     cty <- popPlace(DOLAPool)
     selcty <- input$county
     selseries <- input$series
-    selchart <- input$chartsel
-    OutPlot <- GenPlot(DBPool=DOLAPool, ctyfips=cty, ctyname= selcty, seriestype= selseries, charttype = selchart)
-
-#OutData <- genData(DBPool=DOLAPool,ctyfips=ctylist, ctyname= input$county, datyear= year)
-
+  
+  OutPlot <- GenPlot(DBPool=DOLAPool, ctyfips=cty, ctyname= selcty, seriestype= selseries)
+ 
 output$CHOutput <-  renderPlotly({OutPlot[["CHOutput"]]})
 
 # Add Download Image...
