@@ -24,7 +24,11 @@
 <h2>State Demography Office - Net Migration Charts</h1>
 <p>This application plots net migration data from 1970 to the present for the total populaation and person of working age (18 to 64) for multiple counties.
 <br>Charts are available for total counts and rates, per 100 people.
-<br>Select multiple counties, the data series (Total population or persons Age 18 to 64) and the type or chart to output (a bar chart or a line chart).</p>
+<br>Specify counries, the data series (Total population counts, total population rates, persons Age 18 to 64 counts, persons Age 18 to 64 rates)
+and the type or chart to output (a bar chart or a line chart).</p>
+<p> To select multiple counties, use Shift-click to select a series of counties and Crtl-click tpo select individual counties.  
+<br> Click on the Camera Icon in the chart to download the chart image.
+</p>
 <hr>
 
 <div class = "entry">
@@ -43,7 +47,6 @@
 	<option value="line">Line Chart</option>
   </select>
   <button id="btnChart">Generate Chart</button>
-  <button id="btnSave">Download Chart</button>
   <button id="btnData">Download Data</button>
  </form>
 </div>
@@ -59,6 +62,7 @@
 
 
 //MAIN PROGRAM
+	 document.getElementById('btnData').style.visibility = 'hidden';  
 
  //Populate dropdowns
 
@@ -120,31 +124,19 @@ var chartDim = [{
 //The initial data loop, currently csv file will be updated to JSON
 
 d3.csv("netmig_1864x.csv").then(function(data) {
-        
-	   
 //Click on Generate Chart
-d3.select("#btnChart").on("click",function(event){
+d3.select("#btnChart").on("click",function(event){  
+	    document.getElementById('btnData').style.visibility = 'visible';  
         updateCountChart(chartDim, data);
 	});
 	
 //Data Download
 d3.select("#btnData").on("click", function(event) {
           event.preventDefault();
-//Revise this 
- //         dataDownload(data);
+          dataDownload(data);
  });  
  
- //Chart Download Download
-  d3.select("#btnSave").on("click", function(event) {
-
-//  event.preventDefault();
-
-//Revise this 
-	
-//	imageDownload(chartDim);
- });  //btnSave
-
-     }).catch(function(error){    //Data read Error and end of data loop
+      }).catch(function(error){    //Data read Error and end of data loop
 		 console.log("Process Error");
 	 });
  
