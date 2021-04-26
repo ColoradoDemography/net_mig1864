@@ -1,9 +1,8 @@
 //Net Migration by Age main functions   Plotly Version
 //Things to do 
-//Add migtation rates
 //add data download proc
 //add png download
-//add caption
+
 
 
 //DATA MANIPULATION FUNCTIONS
@@ -77,37 +76,23 @@ function domValues() {
 
  
 //DATA AND IMAGE DOWNLOAD FUNCTIONS
-function dataDownload(chartType){
-	
-	var seldCTY = d3.select('#selCty option:checked').text();
-	var seldFIPS = switchFIPS(seldCTY);
-	var seldYEAR = eval(d3.select("#selYear").property('value'));
-	if(seldCTY == "Broomfield County" && seldYEAR < 2010){
-		seldYEAR = 2010;
-		document.getElementById("selYear").value = 2010;
-    };
-		
-if(chartType == 0){ //Count Data
-     var fileName = "Jobs by Sector Counts " + seldCTY + " " + seldYEAR + ".csv";
-     genDownloadCountPromise(seldFIPS,seldYEAR,seldCTY,fileName);
-     };
-	 
-if(chartType == 1){ //Percentage Data
-     var fileName = "Jobs by Sector Percentage " + seldCTY + " " + seldYEAR + ".csv";
-     genDownloadPCTPromise(seldFIPS,seldYEAR,seldCTY,fileName);
-}; 
+function dataDownload(indata){
 
-if(chartType == 2) {  //Difference Data
-		var begYEAR = eval(d3.select("#begYear").property('value'));
-        var endYEAR = eval(d3.select("#endYear").property('value'));
-		if(seldCTY == "Broomfield County" && begYEAR < 2010){
-	        begYEAR = 2010;
-			document.getElementById("begYear").value = 2010;
-        };
-        var fileName = "Jobs by Sector Differences " + seldCTY + " " + begYEAR + " to " + endYEAR + ".csv";
-
-genDownloadDiffPromise(seldFIPS,begYEAR,endYEAR,seldCTY,fileName);
-};
+	var varArray = domValues();
+//Building FileName
+	var FileName = "Net Migration by Year "
+	if(varArray[0].length == 1) {
+	FileName = FileName + varArray[0][0];
+   } else { 
+	   for (i = 1; i <= varArray[0].length; i++){
+			 FileName = FileName + " " + varArray[0][i-1];
+		 }
+       };
+	 FileName = FileName + ".csv";
+//Filtering data and output
+	var dataOut = indata.filter(d => varArray[1].includes(d.fips));
+	debugger;
+ 	exportToCsv(FileName, dataOut);
 }; //end of dataDownload
 
 
@@ -159,6 +144,7 @@ if(chartType == 0) {
 //updateCountChart reads information from the dropdowns, updates the title block and generates the updated static chart
 function updateCountChart(dimChart,indata) {
 
+var formatDate = d3.timeFormat("%m/%d/%Y");
 var varArray = domValues();
 
 var plotdata = indata.filter(d => varArray[1].includes(d.fips))  //Selecting counties by fips code
@@ -172,7 +158,6 @@ var graph = d3.select("svg").remove();
 var titStr = "Net Migration by Year: ";
 if(varArray[0].length == 1) {
 	titStr = titStr + varArray[0][0];
-	DLName = DLName + varArray[0][0];
    } else { 
 	   for (i = 1; i <= varArray[0].length; i++){
 		 if(i == varArray[0].length){
@@ -197,6 +182,9 @@ if(varArray[0].length == 1) {
 	      titStr = titStr + "<br>Working Age Population Rate per 100 (Age 18-64)";
      };
 
+//Caption String
+var captionSTR = "Data and Visualization by the Colorado State Demography Office, Print Date: " + formatDate(new Date);
+ 
 
 //building traces for charts
 
@@ -253,10 +241,20 @@ for( var i = 0; i < seldata.length; i++) {
 };  //end Trace Loop
 
 
-			var layout = {
+var layout = {
 			title: titStr,
 			barmode: 'group',
-			showlegend: true
+			showlegend: true,
+			annotations : [
+			{text :captionSTR, 
+                            xref : 'paper', 
+							x : 0,
+                            yref : 'paper', 
+							y : -0.25,
+                            align : 'left', 
+							showarrow : false
+			}
+			]
 			};
 
 Plotly.newPlot('chart', dataArr, layout, {displayModeBar: true})
