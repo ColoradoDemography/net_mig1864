@@ -1,56 +1,153 @@
 <!DOCTYPE html>
-<!-- template.html -->
+<! -- SDO Net Migration by Age  -->
+<! -- Program provides Bar Chart or Line Chart of net Migration data by County -->
+<! -- reads data from SDO DB -->
+<! -- Plotly Version  --> 
+
 <head>
-<title>SDO Net Migration Charts</title>
-<style>
+<title>Net Migration by Age</title>
+<link rel="stylesheet" href="./www/common.css">
+<!-- Plotly Library -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js" charset="utf-8"></script>
+<!-- d3 library -->
+<script src="https://d3js.org/d3.v6.min.js"></script>  <!-- Main D3 Library -->
+<script type="text/javascript" src="js/saveSvgAsPng.js"></script>
 
-   .p1 {
-   font-family: Arial, Helvetica, sans-serif;
-   font-size: 10pt;
-   }
-   .t1{
-   font-family: Arial, Helvetica, sans-serif;
-   font-size: 10pt;
-   }
-</style>
 </head>
-  <body>
+<style>
+ td, th {
+    padding: 1px 4px;
+}
 
-                <section id="content" role="main">
-                    <div id="main-content">
-                      <h1 style="font-family: Arial, Helvetica, sans-serif">State Demography Office - Net Migration Charts</h1>
-                      <p class="p1">This application plots net migration data from 1970 to the present for the total populaation and person of working age (18 to 64) for multiple counties.</p>
-					  <p class= "p1">Select multiple counties, the data series (Total population or persons Age 18 to 64) and the type or chart to output (a bar chart or a line chart).
-					   
-					  <table class="t1">
-					  <tr>
-					  <td> {{ county }}</td>
-					  <td> {{ series }} </td>
-					  <td> {{ goBtn }} </td>
-					  <td> {{ dlBtn }}</td>
-					  </tr>
-					  </table>
-                      <hr>
-                        <br>
-                      {{ out_chart }}
-					  <br>
-					 
-                      </div>
-                </section>
-            </div>
-        </div>
+</style>
+<body>
+<h2>State Demography Office - Net Migration Charts</h1>
+<p>This application plots net migration data from 1970 to the present for the total populaation and person of working age (18 to 64) for multiple counties.
+<br>Charts are available for total counts and rates, per 100 people.
+<br>Select multiple counties, the data series (Total population or persons Age 18 to 64) and the type or chart to output (a bar chart or a line chart).</p>
+<hr>
 
-        <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<div class = "entry">
+<form id="infoForm" onsubmit="return false">
+  <select id="selCty" multiple size="4">
+    <option value="000" selected>Colorado</option>
+  </select>
+  <select id="series" style="width : 300px;">
+    <option value="total" selected>Total Population Counts</option>
+	<option value="total_rate">Total Population Rate per 100</option>
+	<option value="age_1864">Working Age Population Counts (Age 18 to 64)</option>
+	<option value="age_1864_rate">Working Age Population Rate per 100 (Age 18 to 64)</option>
+  </select>
+  <select id="chartSel">
+    <option value="bar" selected>Bar Chart</option>
+	<option value="line">Line Chart</option>
+  </select>
+  <button id="btnChart">Generate Chart</button>
+  <button id="btnSave">Download Chart</button>
+  <button id="btnData">Download Data</button>
+ </form>
+</div>
+<hr>
 
-  ga('create', 'UA-76100845-1', 'auto');
-  ga('set', 'anonymizeIp', true);
-  ga('send', 'pageview');
+<div id= "chart"></div>
 
-</script>
+
+
+<!-- chart Functions: InitialChart, updateCountDhart, updatePCTChart, updateDiffChart, genCountChart, genPCTChart -->
+<script type="text/javascript" src="./js/charts.js"></script>
+<script>
+
+
+//MAIN PROGRAM
+
+ //Populate dropdowns
+
+//Counties
+var counties = [{'county': '', 'fips': ''},{'county':'Adams County', 'fips': '001'},
+                {'county':'Alamosa County', 'fips': '003'},{'county':'Arapahoe County', 'fips': '005'},
+				{'county':'Archuleta County', 'fips': '007'},{'county':'Baca County', 'fips': '009'},
+				{'county':'Bent County', 'fips': '011'},{'county':'Boulder County', 'fips': '013'},
+				{'county':'Broomfield County', 'fips': '014'},{'county':'Chaffee County', 'fips': '015'},
+				{'county':'Cheyenne County', 'fips': '017'},{'county':'Clear Creek County', 'fips': '019'},
+				{'county':'Conejos County', 'fips': '021'},{'county':'Costilla County', 'fips': '023'},
+				{'county':'Crowley County', 'fips': '025'},{'county':'Custer County', 'fips': '027'},
+				{'county':'Delta County', 'fips': '029'},{'county':'Denver County', 'fips': '031'},
+				{'county':'Dolores County', 'fips': '033'},{'county':'Douglas County', 'fips': '035'},
+				{'county':'Eagle County', 'fips': '037'},{'county':'Elbert County', 'fips': '039'},
+				{'county':'El Paso County', 'fips': '041'},{'county':'Fremont County', 'fips': '043'},
+				{'county':'Garfield County', 'fips': '045'},{'county':'Gilpin County', 'fips': '047'},
+				{'county':'Grand County', 'fips': '049'},{'county':'Gunnison County', 'fips': '051'},
+				{'county':'Hinsdale County', 'fips': '053'},{'county':'Huerfano County', 'fips': '055'},
+				{'county':'Jackson County', 'fips': '057'},{'county':'Jefferson County', 'fips': '059'},
+				{'county':'Kiowa County', 'fips': '061'},{'county':'Kit Carson County', 'fips': '063'},
+				{'county':'Lake County', 'fips': '065'},{'county':'La Plata County', 'fips': '067'},
+				{'county':'Larimer County', 'fips': '069'},{'county':'Las Animas County', 'fips': '071'},
+				{'county':'Lincoln County', 'fips': '073'},{'county':'Logan County', 'fips': '075'},
+				{'county':'Mesa County', 'fips': '077'},{'county':'Mineral County', 'fips': '079'},
+				{'county':'Moffat County', 'fips': '081'},{'county':'Montezuma County', 'fips': '083'},
+				{'county':'Montrose County', 'fips': '085'},{'county':'Morgan County', 'fips': '087'},
+				{'county':'Otero County', 'fips': '089'},{'county':'Ouray County', 'fips': '091'},
+				{'county':'Park County', 'fips': '093'},{'county':'Phillips County', 'fips': '095'},
+				{'county':'Pitkin County', 'fips': '097'},{'county':'Prowers County', 'fips': '099'},
+				{'county':'Pueblo County', 'fips': '101'},{'county':'Rio Blanco County', 'fips': '103'},
+				{'county':'Rio Grande County', 'fips': '105'},{'county':'Routt County', 'fips': '107'},
+				{'county':'Saguache County', 'fips': '109'},{'county':'San Juan County', 'fips': '111'},
+				{'county':'San Miguel County', 'fips': '113'},{'county':'Sedgwick County', 'fips': '115'},
+				{'county':'Summit County', 'fips': '117'},{'county':'Teller County', 'fips': '119'},
+				{'county':'Washington County', 'fips': '121'},{'county':'Weld County', 'fips': '123'},
+				{'county':'Yuma County', 'fips': '125'}];
+
+ d3.select("#selCty")
+    .selectAll('option')
+    .data(counties)
+    .enter()
+    .append('option')
+    .attr('value', d => d.fips) 
+    .text(d => d.county);
+
+
+//Dimensions of Charts
+var chartDim = [{
+            "margin" : [{top: 20, right: 210, bottom: 40, left: 40}],
+            "width" : 900,
+			"height" : 600,
+			"barWidth" : 8,
+			"barSpace" : 4,
+			"axisShift" : 130,
+			"viewBx" : [{xVal : 0, yVal : 0, vHeight : 1200, vWidth : 1200}]
+			}];
+
+//The initial data loop, currently csv file will be updated to JSON
+
+d3.csv("netmig_1864x.csv").then(function(data) {
+        
+	   
+//Click on Generate Chart
+d3.select("#btnChart").on("click",function(event){
+        updateCountChart(chartDim, data);
+	});
+	
+//Data Download
+d3.select("#btnData").on("click", function(event) {
+          event.preventDefault();
+//Revise this 
+ //         dataDownload(data);
+ });  
+ 
+ //Chart Download Download
+  d3.select("#btnSave").on("click", function(event) {
+
+//  event.preventDefault();
+
+//Revise this 
+	
+//	imageDownload(chartDim);
+ });  //btnSave
+
+     }).catch(function(error){    //Data read Error and end of data loop
+		 console.log("Process Error");
+	 });
+ 
+ </script>
 
 </body>
-</html>
