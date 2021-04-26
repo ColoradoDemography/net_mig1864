@@ -170,7 +170,6 @@ var graph = d3.select("svg").remove();
 //Building Chart Title and filename
 
 var titStr = "Net Migration by Year: ";
-var DLName = "Net Migration by Year ";
 if(varArray[0].length == 1) {
 	titStr = titStr + varArray[0][0];
 	DLName = DLName + varArray[0][0];
@@ -178,14 +177,11 @@ if(varArray[0].length == 1) {
 	   for (i = 1; i <= varArray[0].length; i++){
 		 if(i == varArray[0].length){
 			 titStr = titStr + " and " + varArray[0][i-1];
-			 DLName = DLName + varArray[0][i-1];
 		 } else {
 		if (varArray[0].length == 2){
 			titStr = titStr +  varArray[0][i-1] + " ";
-			DLName = DLName + varArray[0][i-1];
 		} else {
           titStr = titStr +  varArray[0][i-1] + ", ";
-		  DLName = DLName + varArray[0][i-1];
 		 }
        }
 	   }
@@ -201,7 +197,6 @@ if(varArray[0].length == 1) {
 	      titStr = titStr + "<br>Working Age Population Rate per 100 (Age 18-64)";
      };
 
-DLName = DLName + ".png";
 
 //building traces for charts
 
@@ -222,28 +217,29 @@ for(j = 0; j < ArrLen; j++){
 		cname = varArray[0][j];
 	};
 	
+var seldata = plotdata.filter(function(d) {return d.county == cname;});
 
-	var xval = [];
-for(var i=0; i < plotdata.length; i++){
-          xval.push(plotdata[i]['year']);
+var xval = [];
+for(var i=0; i < seldata.length; i++){
+          xval.push(seldata[i]['year']);
        };
 
 var yval = [];
-for(var i=0; i < plotdata.length; i++){
+for(var i=0; i < seldata.length; i++){
 	   if(varArray[2] == "total") {
-          yval.push(plotdata[i]['netmigration_total']);
+          yval.push(seldata[i]['netmigration_total']);
        } else if(varArray[2] == "total_rate") {
-          yval.push(plotdata[i]['rate_total']);
+          yval.push(seldata[i]['rate_total']);
        } else if (varArray[2] == "age_1864") {
-	      yval.push(plotdata[i]['netmigration_1864']);
+	      yval.push(seldata[i]['netmigration_1864']);
 	   } else {
-	      yval.push(plotdata[i]['rate_1864']);
+	      yval.push(seldata[i]['rate_1864']);
      };
        };
 
 var ctyname = [];
-for( var i = 0; i < plotdata.length; i++) {
-	ctyname.push(plotdata[i]['county']);
+for( var i = 0; i < seldata.length; i++) {
+	ctyname.push(seldata[i]['county']);
     };
 	
 
