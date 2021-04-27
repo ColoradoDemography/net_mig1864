@@ -236,7 +236,7 @@ for( var i = 0; i < seldata.length; i++) {
         "x": xval,
         "y": yval,
 		"name" : cname,
-		"text" : ctyname
+		//"text" : ctyname,
 		     };
 };  //end Trace Loop
 
