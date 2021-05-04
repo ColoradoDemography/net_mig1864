@@ -154,7 +154,7 @@ var plotdata = indata.filter(d => varArray[1].includes(d.fips))  //Selecting cou
 
 var graph = d3.select("svg").remove();
 //Building Chart Title and filename
-debugger;
+
 var titStr = "Net Migration by Year: ";
 var chartName = "Net Migration by Year ";
 if(varArray[0].length == 1) {
@@ -207,6 +207,7 @@ if(varArray[3] == "bar") {
 };
 
 //assigning traces 
+
 var ArrLen = varArray[0].length;
 var dataArr = new Array(ArrLen);
 for(j = 0; j < ArrLen; j++){
@@ -218,7 +219,7 @@ for(j = 0; j < ArrLen; j++){
 	
 var seldata = plotdata.filter(function(d) {return d.county == cname;});
 if(varArray[2] == "age_1864_rate"){
-	var seldata = plotdata.filter(function(d) {return d.year >= 1990;});
+	var seldata = seldata.filter(function(d) {return d.year >= 1990;});
 }
 var xval = [];
 for(var i=0; i < seldata.length; i++){
