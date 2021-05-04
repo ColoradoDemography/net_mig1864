@@ -91,7 +91,7 @@ function dataDownload(indata){
 	 FileName = FileName + ".csv";
 //Filtering data and output
 	var dataOut = indata.filter(d => varArray[1].includes(d.fips));
-	debugger;
+
  	exportToCsv(FileName, dataOut);
 }; //end of dataDownload
 
@@ -154,19 +154,24 @@ var plotdata = indata.filter(d => varArray[1].includes(d.fips))  //Selecting cou
 
 var graph = d3.select("svg").remove();
 //Building Chart Title and filename
-
+debugger;
 var titStr = "Net Migration by Year: ";
+var chartName = "Net Migration by Year ";
 if(varArray[0].length == 1) {
 	titStr = titStr + varArray[0][0];
+	chartName = chartName + varArray[0][0];
    } else { 
 	   for (i = 1; i <= varArray[0].length; i++){
 		 if(i == varArray[0].length){
 			 titStr = titStr + " and " + varArray[0][i-1];
+			 chartName = chartName + varArray[0][i-1];
 		 } else {
 		if (varArray[0].length == 2){
 			titStr = titStr +  varArray[0][i-1] + " ";
+			chartName = chartName + varArray[0][i-1] + " ";
 		} else {
           titStr = titStr +  varArray[0][i-1] + ", ";
+		  chartName = chartName + varArray[0][i-1] + " ";
 		 }
        }
 	   }
@@ -174,17 +179,23 @@ if(varArray[0].length == 1) {
 //Creating second line of title
    if(varArray[2] == "total"){
           titStr = titStr + "<br>Total Population Counts";
+		  chartName = chartName + " Total Population Counts";
    } else if(varArray[2] == "total_rate") {
           titStr = titStr + "<br>Total Population Rate per 100";
+		  chartName = chartName + " Total Population Rate";
    } else if(varArray[2] == "age_1864") {
 	      titStr = titStr + "<br>Working Age Population Counts (Age 18-64)";
+		  chartName = chartName + " Working Age Counts";
    } else {
 	      titStr = titStr + "<br>Working Age Population Rate per 100 (Age 18-64)";
+		  chartName = chartName + " Working Age Rate";
      };
 
+   
 //Caption String
 var captionSTR = "Data and Visualization by the Colorado State Demography Office, Print Date: " + formatDate(new Date);
  
+
 
 //building traces for charts
 
@@ -259,7 +270,21 @@ var layout = {
 			]
 			};
 
-Plotly.newPlot('chart', dataArr, layout, {displayModeBar: true})
+Plotly.newPlot('chart', dataArr, layout, {displayModeBar: true,
+		 modeBarButtons: [[{
+			name: 'Save Image',
+			icon: Plotly.Icons.camera,
+			click: function (gd) {
+			  Plotly.downloadImage(gd, {
+				filename: chartName,
+				format: 'png',
+				width: 850,
+				height: 500
+			  })
+			}
+		  } //, 'toImage'
+		  ], []]
+});
 
  
 }; //updateCountChart
