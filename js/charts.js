@@ -206,7 +206,9 @@ for(j = 0; j < ArrLen; j++){
 	};
 	
 var seldata = plotdata.filter(function(d) {return d.county == cname;});
-
+if(varArray[2] == "age_1864_rate"){
+	var seldata = plotdata.filter(function(d) {return d.year >= 1990;});
+}
 var xval = [];
 for(var i=0; i < seldata.length; i++){
           xval.push(seldata[i]['year']);
